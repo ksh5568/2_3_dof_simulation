@@ -1,7 +1,7 @@
 # 🚀 My Robot Simulation Package
 
 ROS 2 기반 다자유도(DOF) 로봇 시뮬레이션 및 Pan-Tilt 시스템 통합 패키지입니다.
-Gazebo Sim(GZ Sim)과 `ros_gz_bridge`를 활용하여 **로봇 제어**와 **센서 데이터(카메라/라이다/IMU 등)** 를 ROS 2 환경에서 사용할 수 있습니다.
+Gazebo Sim(GZ Sim)과 `ros_gz_bridge`를 활용하여 **로봇 제어**를 ROS 2 환경에서 사용할 수 있습니다.
 
 ---
 
