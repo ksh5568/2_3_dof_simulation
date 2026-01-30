@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<sdf version='1.8'>
+  <model name='pan_tilt_gimbal_model'>
+    <include merge='true'>
+      <uri>file:///home/kimsh/ros2_ws/src/my_robot/sdf/ground_sun.sdf</uri>
+    </include>
+    <include merge='false'>
+      <uri>file:///home/kimsh/ros2_ws/src/my_robot/sdf/pan_tilt_system.sdf</uri>
+      <pose>0 0 200.0 0 0 0</pose>
+    </include>
+    <include merge='true'>
+      <uri>file:///home/kimsh/ros2_ws/src/my_robot/sdf/gimbal.sdf</uri>
+      <pose>0 0 -5.0 0 0 0</pose>
+    </include>
+    <joint name="AttachToGround" type="fixed">
+      <parent>ground_plane::link</parent>  <!-- ground_plane의 링크 -->
+      <child>pan_tilt_system::base</child> <!-- pan_tilt_system의 첫 링크 이름 -->
+    </joint>
+    <joint name="AttachGimbal" type="fixed">
+      <parent>pan_tilt_system::plate</parent>   <!-- tilt_motor_joint의 child 링크 -->
+      <child>gimbal::cgo3_mount_link</child>
+    </joint>
+  </model>
+</sdf>
+

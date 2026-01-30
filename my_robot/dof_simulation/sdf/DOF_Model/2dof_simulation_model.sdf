@@ -1,0 +1,322 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+    <world name="sensor_world">
+        <physics name="1ms" type="ode">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+
+        <!-- ✅ 기본 Gazebo 시스템 플러그인 -->
+        <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+        <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+        <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+        <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre2</render_engine>
+        </plugin>
+        <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+
+        <!-- ✅ Ground Plane 추가 (추락 방지) -->
+        <model name="ground_plane">
+            <static>true</static>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                        </plane>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <ambient>0.8 0.8 0.8 1</ambient>
+                        <diffuse>0.8 0.8 0.8 1</diffuse>
+                        <specular>0.8 0.8 0.8 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+
+        <!-- ✅ Sun 추가 -->
+        <model name="sun">
+            <static>true</static>
+            <pose>0 0 10 0 0 0</pose>
+            <link name="sun_link">
+                <light type="directional" name="sun_light">
+                    <cast_shadows>true</cast_shadows>
+                    <diffuse>1.0 1.0 0.8 1</diffuse>
+                    <specular>0.2 0.2 0.2 1</specular>
+                    <attenuation>
+                        <range>1000</range>
+                        <constant>0.9</constant>
+                        <linear>0.01</linear>
+                        <quadratic>0.001</quadratic>
+                    </attenuation>
+                    <direction>-0.5 0.1 -0.9</direction>
+                </light>
+            </link>
+        </model>
+
+        <!-- ✅ Vehicle 모델 -->
+        <model name='dof_model' canonical_link='chassis'>
+            <pose relative_to='world'>0 0 1.0 0 0 0</pose>
+
+            <!-- ✅ 차체 -->
+            <link name='chassis'>
+                <pose relative_to='__model__'>0 0 0 0 0 0</pose>
+                <inertial>
+                    <mass>50</mass>
+                    <inertia>
+                        <ixx>0.729165</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.729165</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.625</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 -1.0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/dof_simulation/sdf/DOF_Model/meshes/zig_model.dae</uri>
+                            <scale>0.004 0.004 0.004</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <geometry>
+                        <box>
+                            <size>1.0 1.0 3.0</size>
+                        </box>
+                    </geometry>
+                </collision>
+            </link>
+
+            <!-- ✅ yaw Wheel (수평) -->
+            <link name='yaw_wheel'>
+                <pose relative_to="chassis">0 0 1.6 0 0 0</pose>
+                <inertial>
+                    <mass>5</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <geometry>
+                        <cylinder>
+                            <radius>0.05</radius>
+                            <length>0.05</length>
+                        </cylinder>
+                    </geometry>
+                    <material>
+                        <ambient>0.0 1.0 0.0 1</ambient>
+                        <diffuse>0.0 1.0 0.0 1</diffuse>
+                        <specular>0.0 1.0 0.0 1</specular>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <cylinder>
+                            <radius>0.2</radius>
+                            <length>0.1</length>
+                        </cylinder>
+                    </geometry>
+                </collision>
+            </link>
+
+            <!-- ✅ Pitch Wheel (수직) -->
+            <link name='pitch_wheel'>
+                <pose relative_to="yaw_wheel">0 0 0.05 1.5707 0 0</pose>
+                <inertial>
+                    <mass>5</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <geometry>
+                        <cylinder>
+                            <radius>0.05</radius>
+                            <length>0.05</length>
+                        </cylinder>
+                    </geometry>
+                    <material>
+                        <ambient>1.0 0.0 0.0 1</ambient>
+                        <diffuse>1.0 0.0 0.0 1</diffuse>
+                        <specular>1.0 0.0 0.0 1</specular>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <cylinder>
+                            <radius>0.05</radius>
+                            <length>0.05</length>
+                        </cylinder>
+                    </geometry>
+                </collision>
+            </link>
+
+            <link name='gray_box'>
+                <pose relative_to="pitch_wheel">0 0.05 0 0 0 0</pose>  <!-- yaw_wheel 위에 배치 -->
+                <self_collide>true</self_collide>
+                <inertial>
+                    <mass>1.0</mass>
+                    <inertia>
+                        <ixx>0.2</ixx>
+                        <iyy>0.2</iyy>
+                        <izz>0.2</izz>
+                    </inertia>
+                </inertial>
+                <gravity>1</gravity>
+                <visual name='visual'>
+                    <pose>-1.15 0 0 -1.57 1.57 0</pose>
+                    <geometry>
+                        <mesh>     
+                            <uri>file:///home/kimsh/ros2_ws/src/dof_simulation/sdf/DOF_Model/meshes/2dof_model.dae</uri>
+                            <scale>0.004 0.004 0.004</scale>
+                        </mesh>
+                    </geometry>
+                    <material>
+                        <ambient>0.5 0.5 0.5 1</ambient>  <!-- ✅ 회색 설정 -->
+                        <diffuse>0.5 0.5 0.5 1</diffuse>
+                        <specular>0.5 0.5 0.5 1</specular>
+                    </material>
+                </visual>
+                <collision name='collision'>
+                    <geometry>
+                        <box>
+                            <size>1.0 0.3 0.3</size>
+                        </box>
+                    </geometry>
+                </collision>
+                <sensor name="imu_sensor" type="imu">
+                    <always_on>1</always_on>
+                    <update_rate>1</update_rate>
+                    <visualize>true</visualize>
+                    <topic>imu</topic>
+                </sensor>
+            </link>
+
+            <!-- ✅ Joint 설정 -->
+
+            <!-- yaw 회전 (수평) -->
+            <joint name='yaw_wheel_joint' type='revolute'>
+                <parent>chassis</parent>
+                <child>yaw_wheel</child>
+                <axis>
+                    <xyz>0 0 1</xyz>
+                    <limit>
+                        <lower>-1e16</lower>
+                        <upper>1e16</upper>
+                        <effort>5e6</effort>  <!-- ✅ Effort 설정 추가 -->
+                    </limit>
+                </axis>
+            </joint>
+
+            <!-- Pitch 회전 (수직) -->
+            <joint name='pitch_wheel_joint' type='revolute'>
+                <parent>yaw_wheel</parent>
+                <child>pitch_wheel</child>
+                <axis>
+                    <xyz>0 0 1</xyz>
+                    <limit>
+                        <lower>-0.785398</lower>
+                        <upper>0.785398</upper>
+                        <effort>5e6</effort>  <!-- ✅ Effort 설정 추가 -->
+                    </limit>
+                </axis>
+            </joint>
+
+            <joint name='gray_box_joint' type='fixed'>
+                <parent>pitch_wheel</parent>
+                <child>gray_box</child>
+            </joint>
+
+            <!-- ✅ Joint Controller 추가 (Velocity 명령 가능하도록) -->
+            <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+                <joint_name>pitch_wheel_joint</joint_name>
+                <topic>/pitch_wheel/command</topic>
+                <velocity_pid>
+                    <p>1.0</p>
+                    <i>0.0</i>
+                    <d>0.0</d>
+                    <reset_on_setpoint_change>true</reset_on_setpoint_change> 
+                </velocity_pid>
+            </plugin>
+
+            <!-- ✅ Joint Controller 추가 (Velocity 명령 가능하도록) -->
+            <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+                <joint_name>yaw_wheel_joint</joint_name>
+                <topic>/yaw_wheel/command</topic>
+                <velocity_pid>
+                    <p>1.0</p>
+                    <i>0.0</i>
+                    <d>0.0</d>
+                    <reset_on_setpoint_change>true</reset_on_setpoint_change> 
+                </velocity_pid>
+            </plugin>
+        </model>
+        
+        <!-- ✅ 위쪽 화살표 키 (↑) 누르면 피치 증가 -->
+        <plugin filename="gz-sim-triggered-publisher-system"
+                name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">16777235</match>  <!-- 🔼 위쪽 화살표 키 -->
+            </input>
+            <output type="gz.msgs.Double" topic="/pitch_wheel/command">
+                data: 0.3  <!-- ✅ 피치 증가 (양의 속도) -->
+            </output>
+        </plugin>
+        
+        <!-- ✅ 아래쪽 화살표 키 (↓) 누르면 피치 감소 -->
+        <plugin filename="gz-sim-triggered-publisher-system"
+                 name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">16777237</match>  <!-- 🔽 아래쪽 화살표 키 -->
+            </input>
+            <output type="gz.msgs.Double" topic="/pitch_wheel/command">
+                data: -0.3  <!-- ✅ 피치 감소 (음의 속도) -->
+            </output>
+        </plugin>
+        
+        <!-- ✅ 왼쪽 화살표 키 (←) 누르면 요 증가 -->
+        <plugin filename="gz-sim-triggered-publisher-system"
+                name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">16777234</match>  <!-- ◀️ 왼쪽 화살표 키 -->
+            </input>
+            <output type="gz.msgs.Double" topic="/yaw_wheel/command">
+                data: 0.3  <!-- ✅ 요 증가 (양의 속도) -->
+            </output>
+        </plugin>
+        
+        <!-- ✅ 오른쪽 화살표 키 (→) 누르면 요 감소 -->
+        <plugin filename="gz-sim-triggered-publisher-system"
+                name="gz::sim::systems::TriggeredPublisher">
+            <input type="gz.msgs.Int32" topic="/keyboard/keypress">
+                <match field="data">16777236</match>  <!-- ▶️ 오른쪽 화살표 키 -->
+            </input>
+            <output type="gz.msgs.Double" topic="/yaw_wheel/command">
+                data: -0.3  <!-- ✅ 요 감소 (음의 속도) -->
+            </output>
+        </plugin>
+    </world>
+</sdf>
+

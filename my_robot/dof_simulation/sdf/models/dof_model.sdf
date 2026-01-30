@@ -1,0 +1,39 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+    <world name="dof_model">
+        <physics name="1ms" type="ignored">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+        <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+        <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+        <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+
+        <!-- ✅ DOF_Model 추가 (올바른 경로 사용) -->
+        <include>
+            <uri>model://DOF_Model</uri>
+            <pose>0 0 0 0 0 0</pose>
+        </include>
+
+        <!-- ✅ Joint Controller 수정 -->
+        <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+            <joint_name>DOF_Model::pitch_joint</joint_name>
+            <topic>/DOF_Model/pitch_joint/command</topic>
+        </plugin>
+
+        <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+            <joint_name>DOF_Model::yaw_joint</joint_name>
+            <topic>/DOF_Model/yaw_joint/command</topic>
+        </plugin>
+
+        <gui fullscreen="0">
+            <plugin filename="MinimalScene" name="3D View"/>
+            <plugin filename="GzSceneManager" name="Scene Manager"/>
+        </gui>
+
+        <light type="directional" name="sun">
+            <pose>0 0 10 0 0 0</pose>
+        </light>
+    </world>
+</sdf>
+

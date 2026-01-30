@@ -1,0 +1,462 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+    <world name="sensor_world">
+        <physics name="1ms" type="ode">
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1.0</real_time_factor>
+        </physics>
+
+        <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"/>
+        <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"/>
+        <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"/>
+        <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"/>
+        <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
+            <render_engine>ogre</render_engine>
+        </plugin>
+        <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"/>
+
+        <model name="ground_plane">
+            <static>true</static>
+            <link name="link">
+                <collision name="collision">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                        </plane>
+                    </geometry>
+                </collision>
+                <visual name="visual">
+                    <geometry>
+                        <plane>
+                            <normal>0 0 1</normal>
+                            <size>100 100</size>
+                        </plane>
+                    </geometry>
+                    <material>
+                        <ambient>0.8 0.8 0.8 1</ambient>
+                        <diffuse>0.8 0.8 0.8 1</diffuse>
+                        <specular>0.8 0.8 0.8 1</specular>
+                    </material>
+                </visual>
+            </link>
+        </model>
+        
+        <model name="sun">
+            <static>true</static>
+            <pose>0 0 10 0 0 0</pose>
+            <link name="sun_link">
+                <light type="directional" name="sun_light">
+                    <cast_shadows>true</cast_shadows>
+                    <diffuse>1.0 1.0 0.8 1</diffuse>
+                    <specular>0.2 0.2 0.2 1</specular>
+                    <attenuation>
+                        <range>1000</range>
+                        <constant>0.9</constant>
+                        <linear>0.01</linear>
+                        <quadratic>0.001</quadratic>
+                    </attenuation>
+                    <direction>-0.5 0.1 -0.9</direction>
+                </light>
+            </link>
+        </model>
+
+        <model name='pan_tilt_system' canonical_link='base'>
+            <pose relative_to='world'>0 0 1.0 0 0 0</pose>
+
+            <link name='base'>
+                <pose relative_to='__model__'>0 0 -1.0 0 0 1.5708</pose>
+                <inertial>
+                    <mass>50</mass>
+                    <inertia>
+                        <ixx>0.729165</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.729165</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.625</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/base.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/base.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </collision>
+            </link>
+            
+            <link name='pan_motor'>
+                <pose relative_to='base'>0 0 0.68 1.5708 0 0</pose>
+                <inertial>
+                    <mass>5</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/ym080.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/ym080.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </collision>
+            </link>
+            
+            <link name='pan_support'>
+                <pose relative_to='pan_motor'>0.62 0.07 0 -1.5708 -1.5708 0</pose>
+                <inertial>
+                    <mass>5</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/pan_support.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/pan_support.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </collision>
+            </link>
+            
+            <link name='tilt_motor'>
+                <pose relative_to='pan_support'>0 0.04 0.464 3.14159 0 0</pose>
+                <inertial>
+                    <mass>5</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/ym080.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/ym080.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </collision>
+            </link>
+            
+            <link name='plate'>
+                <pose relative_to='tilt_motor'>0 0.68 0.02 3.14159 0 1.5708</pose>
+                <inertial>
+                    <mass>1</mass>
+                    <inertia>
+                        <ixx>0.145833</ixx>
+                        <ixy>0</ixy>
+                        <ixz>0</ixz>
+                        <iyy>0.145833</iyy>
+                        <iyz>0</iyz>
+                        <izz>0.125</izz>
+                    </inertia>
+                </inertial>
+                <visual name='visual'>
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/plate.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </visual>
+                <collision name="collision">
+                    <pose>0 0 0 0 0 0</pose>
+                    <geometry>
+                        <mesh>
+                            <uri>file:///home/kimsh/ros2_ws/src/pan_tilt/sdf/meshes/plate.dae</uri>
+                            <scale>0.02 0.02 0.02</scale>
+                        </mesh>
+                    </geometry>
+                </collision>
+            </link>
+      
+	    <!-- Camera -->
+	    <link name="camera_link">
+	        <pose relative_to='plate'>0 0 0.15 0 0 1.5708</pose>
+		<inertial>
+		    <pose>0 0 0 0 0 0</pose>
+		    <mass>0.1</mass>
+                    <inertia>
+			<ixx>0.001</ixx>
+			<ixy>0</ixy>
+			<ixz>0</ixz>
+			<iyy>0.001</iyy>
+			<iyz>0</iyz>
+			<izz>0.001</izz>
+                    </inertia>
+		</inertial>
+		<collision name='camera_collision'>
+		    <pose>0 0 0 0 0 0</pose>
+		    <geometry>
+			<box>
+			    <size>0.2 0.2 0.2</size>
+			</box>
+		    </geometry>
+		    <surface>
+			<friction>
+			    <ode>
+			        <mu>1</mu>
+				<mu2>1</mu2>
+			    </ode>
+			</friction>
+			<contact>
+			    <ode>
+			        <kp>1e+8</kp>
+				<kd>1</kd>
+				<max_vel>0.01</max_vel>
+				<min_depth>0.001</min_depth>
+			    </ode>
+			</contact>
+		    </surface>
+		</collision>
+		<visual name='camera_visual'>
+		    <pose>0 0 0 0 0 0</pose>
+		    <geometry>
+			<box>
+			    <size>0.2 0.2 0.2</size>
+			</box>
+		    </geometry>
+		    <material>
+			<ambient>.175 .175 .175  1.0</ambient>
+			<diffuse>.175 .175 .175  1.0</diffuse>
+			<specular>.175 .175 .175  1.0</specular>
+		    </material>
+		</visual>
+		<sensor name="camera_sensor" type="camera">
+		    <pose>0 0 0 0 0 0</pose>
+		    <camera>
+			<horizontal_fov>1.204</horizontal_fov>
+			<image>
+			    <width>640</width>    
+			    <height>480</height>
+			    <format>R8G8B8</format>
+			</image>
+			<clip>
+			    <near>0.1</near>
+			    <far>100</far>
+			</clip>
+		    </camera>
+		    <always_on>true</always_on>
+		    <update_rate>30</update_rate>
+		    <visualize>true</visualize>
+                    <topic>/image_raw</topic>
+		</sensor>
+	    </link>
+			
+	    <!-- Lidar -->
+	    <link name="lidar_link">
+	  	<pose relative_to='plate'>-0.4 0 0.15 0 0 1.5708</pose>
+		<inertial>
+		    <pose>0 0 0 0 0 0</pose>
+		    <mass>0.1</mass>
+                    <inertia>
+			<ixx>0.001</ixx>
+			<ixy>0</ixy>
+			<ixz>0</ixz>
+			<iyy>0.001</iyy>
+			<iyz>0</iyz>
+			<izz>0.001</izz>
+                    </inertia>
+		</inertial>
+		<collision name='lidar_collision'>
+		    <geometry>
+			<box>
+			    <size>0.2 0.2 0.2</size>
+			</box>
+		    </geometry>
+		    <surface>
+		        <friction>
+			    <ode>
+			        <mu>1</mu>
+				<mu2>1</mu2>
+			    </ode>
+			</friction>
+			<contact>
+			    <ode>
+				<kp>1e+8</kp>
+				<kd>1</kd>
+				<max_vel>0.01</max_vel>
+				<min_depth>0.001</min_depth>
+			    </ode>
+			</contact>
+		    </surface>
+		</collision>
+		<visual name='lidar_visual'>
+		    <geometry>
+			<box>
+			    <size>0.2 0.2 0.2</size>
+			</box>
+		    </geometry>
+		    <material>
+			<ambient>0.8 0.8 0.8 1.0</ambient>
+			<diffuse>0.8 0.8 0.8 1.0</diffuse>
+			<specular>0.2 0.2 0.2 1.0</specular>
+		    </material>
+		</visual>
+                <sensor name='gpu_lidar' type='gpu_lidar'>
+                    <pose relative_to='lidar_link'>0 0 -0.2 0 0 0</pose>
+                    <update_rate>10</update_rate>
+                    <ray>
+                        <scan>
+                            <horizontal>
+                                <samples>1024</samples>
+                                <resolution>1</resolution>
+                                <min_angle>-0.61548</min_angle>
+                                <max_angle>0.61548</max_angle>
+                            </horizontal>
+                            <vertical>
+                                <samples>128</samples>
+                                <resolution>1</resolution>
+                                <min_angle>-0.67474</min_angle>
+                                <max_angle>0.67474</max_angle>
+                            </vertical>
+                        </scan>
+                        <range>
+                            <min>0.08</min>
+                            <max>100.0</max>
+                            <resolution>0.02</resolution>
+                        </range>
+                        <noise>
+                            <type>gaussian</type>
+                            <mean>0</mean>
+                            <stddev>0.01</stddev>
+                        </noise>
+                    </ray>
+                    <always_on>1</always_on>
+                    <visualize>true</visualize>
+                    <topic>scan</topic>
+                    <gz_frame_id>livox/sensor</gz_frame_id>
+                </sensor>
+	    </link>
+            
+            <joint name='base_joint' type='revolute'>
+                <parent>base</parent>
+                <child>pan_motor</child>
+                <axis>
+                    <xyz>0 1 0</xyz>
+                    <limit>
+                        <lower>-1e16</lower>
+                        <upper>1e16</upper>
+                        <effort>5e6</effort>
+                    </limit>
+                </axis>
+            </joint>
+            
+            <joint name='pan_motor_joint' type='fixed'>
+                <parent>pan_motor</parent>
+                <child>pan_support</child>
+            </joint>
+            
+            <joint name='pan_support_joint' type='fixed'>
+                <parent>pan_support</parent>
+                <child>tilt_motor</child>
+            </joint>
+            
+            <joint name='tilt_motor_joint' type='revolute'>
+                <parent>pan_support</parent>
+                <child>plate</child>
+                <axis>
+                    <xyz>1 0 0</xyz>
+                    <limit>
+                        <lower>-1e16</lower>
+                        <upper>1e16</upper>
+                        <effort>5e6</effort>
+                    </limit>
+                </axis>
+            </joint>
+            
+            <joint name='plate_gimbal_joint' type='fixed'>
+                <parent>plate</parent>
+                <child>camera_link</child>
+                <pose>0 0 -0.5 0 0 3.14</pose>
+            </joint>
+            
+            <joint name='plate_lidar_joint' type='fixed'>
+                <parent>plate</parent>
+                <child>lidar_link</child>
+                <pose>0 0 -0.5 0 0 3.14</pose>
+            </joint>
+            
+            <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+                <joint_name>base_joint</joint_name>
+                <topic>/pan/command</topic>
+                <velocity_pid>
+                    <p>1.0</p>
+                    <i>0.0</i>
+                    <d>0.0</d>
+                    <reset_on_setpoint_change>true</reset_on_setpoint_change> 
+                </velocity_pid>
+            </plugin>
+            
+            <plugin filename="gz-sim-joint-controller-system" name="gz::sim::systems::JointController">
+                <joint_name>tilt_motor_joint</joint_name>
+                <topic>/tilt/command</topic>
+                <velocity_pid>
+                    <p>1.0</p>
+                    <i>0.0</i>
+                    <d>0.0</d>
+                    <reset_on_setpoint_change>true</reset_on_setpoint_change> 
+                </velocity_pid>
+            </plugin>
+        </model>
+    </world>
+</sdf>
+
