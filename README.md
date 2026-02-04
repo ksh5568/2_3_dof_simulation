@@ -13,13 +13,7 @@ Gazebo Sim(GZ Sim)과 `ros_gz_bridge`를 활용하여 **로봇 제어**를 ROS 2
 * `gz sim` 기반 물리 시뮬레이션
 * `ros_gz_bridge`로 Gazebo ↔ ROS 2 토픽 연동
 
-### 2) Pan-Tilt 시스템
-
-* 카메라 / 라이다 / IMU 센서 연동
-* `/pan/command`, `/tilt/command` 토픽으로 제어
-* 브리지를 통해 센서 데이터를 ROS 메시지로 변환하여 RViz/ROS 노드에서 활용 가능
-
-### 3) 블레이드 제어 (nDOF)
+### 2) 블레이드 제어 (nDOF)
 
 * nDOF 모델에서 블레이드 제어 지원
   (예: `/blade_1_cmd/command`, `/blade_2_cmd/command` 등)
